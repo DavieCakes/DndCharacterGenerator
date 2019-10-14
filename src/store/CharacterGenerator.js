@@ -61,9 +61,12 @@ export const actionCreators = {
         dispatch({ type: "skillCalcMod", name: element });
       });
   },
-  updateSkill: ({ name, bonuses, isProficient }) => dispatch => {
-    dispatch({ type: "skillBonuses", name, bonuses });
-    dispatch({ type: "skillIsProficient", name, isProficient });
+  updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
+    const _bonuses = bonuses || getState().characterGenerator.skills[name].bonuses
+    const _isProficient = isProficient || getState().characterGenerator.skills[name].isProficient
+    
+    dispatch({ type: "skillBonuses", name, bonuses: _bonuses });
+    dispatch({ type: "skillIsProficient", name, isProficient: _isProficient });
     dispatch({ type: "skillCalcMod", name });
   }
 };

@@ -5,9 +5,9 @@ import { bindActionCreators } from "redux";
 import { actionCreators } from "../store/CharacterGenerator";
 import * as DnDCharacter from "../models/DnDCharacter";
 
-import { List, Container, Card, Button } from "semantic-ui-react";
+import { Button, Card } from "@blueprintjs/core";
 
-import Generators from '../utils/Generators'
+import Generators from "../utils/Generators";
 
 class StoreTester extends Component {
   constructor(props) {
@@ -16,40 +16,35 @@ class StoreTester extends Component {
   }
 
   componentDidMount() {
-    Generators.generateDnDCharacter()
+    Generators.generateDnDCharacter();
   }
 
   render() {
     return (
-      <Container>
-        {/* {this.generateFromObject()} */}
-        {/* <CharacterContainer
-          abilities={this.character.getAbilities()}
-          skills={this.character.getSkills()}
-          proficiencyBonus={this.character.ProficiencyBonus}
-        /> */}
+      <React.Fragment>
         <Button onClick={Generators.generateDnDCharacter}>Generate</Button>
         <CharacterContainer
           abilities={this.props.abilities}
           skills={this.props.skills}
           proficiencyBonus={this.props.proficiencyBonus}
+          updateSkill={this.props.updateSkill}
         />
-      </Container>
+      </React.Fragment>
     );
   }
 }
 
 class CharacterContainer extends React.PureComponent {
   render() {
-    console.log(this.props)
+    console.log(this.props);
     return (
-      <Container>
+      <React.Fragment>
         <AbilitiesContainer abilities={this.props.abilities} />
-        <SkillsContainer skills={this.props.skills} />
+        <SkillsContainer skills={this.props.skills} updateSkill={this.props.updateSkill} />
         <ProficiencyBonusContainer
           proficiencyBonus={this.props.proficiencyBonus}
         />
-      </Container>
+      </React.Fragment>
     );
   }
 }
@@ -59,16 +54,15 @@ class ProficiencyBonusContainer extends React.PureComponent {
     return (
       <div>
         <Card>
-          <Card.Header
-            as={"h3"}
+          <h3
             style={{
               background: "black",
               color: "white"
             }}
           >
             Proficiency Bonus
-          </Card.Header>
-          <Card.Content>{this.props.proficiencyBonus}</Card.Content>
+          </h3>
+          <p>{this.props.proficiencyBonus}</p>
         </Card>
       </div>
     );
@@ -79,28 +73,28 @@ class SkillsContainer extends React.PureComponent {
   render() {
     return (
       <Card>
-        <Card.Header
-          as={"h3"}
+        <h3
           style={{
             background: "black",
             color: "white"
           }}
         >
           Skills
-        </Card.Header>
-        <Card.Content>
+        </h3>
+        <div>
           {Object.keys(this.props.skills).map(e => {
-            const skill = this.props.skills[e]
+            const skill = this.props.skills[e];
             return (
               <Skill
                 key={e}
                 name={e}
                 modifer={skill.modifier}
-                isProficient={e.isProficient}
+                isProficient={skill.isProficient}
+                updateSkill={this.props.updateSkill}
               />
             );
           })}
-        </Card.Content>
+        </div>
       </Card>
     );
   }
@@ -108,11 +102,11 @@ class SkillsContainer extends React.PureComponent {
 
 class Skill extends React.PureComponent {
   render() {
+    console.log(this.props.isProficient)
+    console.log('rendering skill')
     return (
-      <div>
-        <List.Item>
-          {this.props.name} | {this.props.modifer}{" "}
-        </List.Item>
+      <div onClick={() => this.props.updateSkill({name: this.props.name, isProficient: !this.props.isProficient})}>
+          {this.props.name} | {this.props.modifer}{" "} | { (this.props.isProficient)?"Y":"N"}
       </div>
     );
   }
@@ -122,31 +116,27 @@ class AbilitiesContainer extends React.PureComponent {
   render() {
     return (
       <Card>
-        <Card.Header
-          as={"h3"}
+        <h3
           style={{
             background: "black",
             color: "white"
           }}
         >
           Abilities:
-        </Card.Header>
-        <Card.Content>
-          <List>
+        </h3>
+        <div>
             {Object.keys(this.props.abilities).map(e => {
-              const ability = this.props.abilities[e]
+              const ability = this.props.abilities[e];
               return (
-
                 <Ability
-                key={e}
-                name={e}
-                finalValue={ability.finalValue}
-                modifier={ability.modifier}
+                  key={e}
+                  name={e}
+                  finalValue={ability.finalValue}
+                  modifier={ability.modifier}
                 />
-                )
+              );
             })}
-          </List>
-        </Card.Content>
+        </div>
       </Card>
     );
   }
@@ -155,9 +145,9 @@ class AbilitiesContainer extends React.PureComponent {
 class Ability extends React.PureComponent {
   render() {
     return (
-      <List.Item>
+      <div>
         {this.props.name} | {this.props.finalValue} | {this.props.modifier}
-      </List.Item>
+      </div>
     );
   }
 }
