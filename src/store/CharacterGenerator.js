@@ -52,13 +52,15 @@ const initialState = {
 
 // declare action creators
 export const actionCreators = {
-  updateAbility: ({ name, baseValue, bonuses }) => (
+  updateAbility: ({ name, baseValue, bonuses }) => async (
     dispatch,
     getState
   ) => {
+    const _baseValue = (baseValue !== undefined)? baseValue : getState().characterGenerator.abilities[name].baseValue
+    const _bonuses = (bonuses !== undefined) ? bonuses : getState().characterGenerator.abilities[name].bonuses
     // dispatch({ type: 'updateAbility', name, baseValue, bonuses })
-    dispatch({ type: "abilityBaseValue", name, baseValue });
-    dispatch({ type: "abilityBonuses", name, bonuses });
+    dispatch({ type: "abilityBaseValue", name, baseValue: _baseValue });
+    dispatch({ type: "abilityBonuses", name, bonuses: _bonuses });
     dispatch({ type: "abilityCalcFinalValue", name });
     dispatch({ type: "abilityCalcMod", name });
 
@@ -79,7 +81,7 @@ export const actionCreators = {
   },
   updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
     const _bonuses = bonuses || getState().characterGenerator.skills[name].bonuses
-    const _isProficient = (isProficient != undefined) ? isProficient : getState().characterGenerator.skills[name].isProficient
+    const _isProficient = (isProficient !== undefined) ? isProficient : getState().characterGenerator.skills[name].isProficient
 
     dispatch({ type: "skillBonuses", name, bonuses: _bonuses });
     dispatch({ type: "skillIsProficient", name, isProficient: _isProficient });
@@ -87,7 +89,7 @@ export const actionCreators = {
   },
   updateSave: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
     const _bonuses = bonuses || getState().characterGenerator.saves[name].bonuses
-    const _isProficient = (isProficient != undefined) ? isProficient : getState().characterGenerator.saves[name].isProficient
+    const _isProficient = (isProficient !== undefined) ? isProficient : getState().characterGenerator.saves[name].isProficient
     console.log('updating save')
     dispatch({ type: "saveBonuses", name, bonuses: _bonuses })
     dispatch({ type: "saveIsProficient", name, isProficient: _isProficient })
