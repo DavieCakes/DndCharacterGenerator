@@ -38,7 +38,16 @@ const initialState = {
     performance: { ability: "charisma", isProficient: false, modifier: 0 },
     persuasion: { ability: "charisma", isProficient: false, modifier: 0 }
   },
-  proficiencyBonus: 3
+  saves: {
+    strength: { bonuses: [], baseValue: 10, finalValue: 10, isProficient: false, modifier: 0 },
+    dexterity: { bonuses: [], finalValue: 10, modifier: 0, isProficient: false, baseValue: 10 },
+    intelligence: { bonuses: [], finalValue: 10, modifier: 0, isProficient: false, baseValue: 10 },
+    constitution: { bonuses: [], finalValue: 10, modifier: 0, isProficient: false, baseValue: 10 },
+    charisma: { bonuses: [], finalValue: 10, modifier: 0, isProficient: false, baseValue: 10 },
+    wisdom: { bonuses: [], finalValue: 10, modifier: 0, isProficient: false, baseValue: 10 }
+  },
+  proficiencyBonus: 3,
+  proficiencySelections: 0
 };
 
 // declare action creators
@@ -60,14 +69,30 @@ export const actionCreators = {
       .forEach(element => {
         dispatch({ type: "skillCalcMod", name: element });
       });
+
+    // saves
+    Object.keys(getState().characterGenerator.saves)
+      .filter(element => element === name)
+      .forEach(element => {
+        dispatch({ type: "saveCalcMod", name: element });
+      });
   },
   updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
     const _bonuses = bonuses || getState().characterGenerator.skills[name].bonuses
-    const _isProficient = isProficient || getState().characterGenerator.skills[name].isProficient
-    
+    const _isProficient = (isProficient != undefined) ? isProficient : getState().characterGenerator.skills[name].isProficient
+
     dispatch({ type: "skillBonuses", name, bonuses: _bonuses });
     dispatch({ type: "skillIsProficient", name, isProficient: _isProficient });
     dispatch({ type: "skillCalcMod", name });
+  },
+  updateSave: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
+    const _bonuses = bonuses || getState().characterGenerator.saves[name].bonuses
+    const _isProficient = (isProficient != undefined) ? isProficient : getState().characterGenerator.saves[name].isProficient
+    console.log('updating save')
+    dispatch({ type: "saveBonuses", name, bonuses: _bonuses })
+    dispatch({ type: "saveIsProficient", name, isProficient: _isProficient })
+    dispatch({ type: "saveCalcFinalValue", name })
+    dispatch({ type: "saveCalcMod", name })
   }
 };
 
@@ -123,7 +148,7 @@ export const reducer = (state, action) => {
         ...state,
         abilities: {
           ...state.abilities,
-          [action.name] : {
+          [action.name]: {
             ...state.abilities[action.name],
             modifier: modifier
           }
@@ -135,7 +160,7 @@ export const reducer = (state, action) => {
         ...state,
         skills: {
           ...state.skills,
-          [action.name] : {
+          [action.name]: {
             ...state.skills[action.name],
             bonuses: [...action.bonuses]
           }
@@ -144,13 +169,17 @@ export const reducer = (state, action) => {
     }
     case "skillIsProficient": {
       const newState = { ...state };
+      if (action.isProficient != state.skills[action.name].isProficient) {
+        newState.proficiencySelections += (action.isProficient) ? 1 : -1
+      }
       newState.skills[action.name].isProficient = action.isProficient;
+      console.log(newState.proficiencySelections)
       return newState;
     }
     case "skillCalcMod": {
       const baseModifier =
         state.abilities[state.skills[action.name].ability].modifier
-      const proficiencyBonus = (state.skills[action.name].isProficient)?state.proficiencyBonus:0
+      const proficiencyBonus = (state.skills[action.name].isProficient) ? state.proficiencyBonus : 0
       return {
         ...state,
         skills: {
@@ -161,6 +190,64 @@ export const reducer = (state, action) => {
           }
         }
       };
+    }
+    /*
+        dispatch({ type: "saveBonuses", name, bonuses: _bonuses})
+    dispatch({ type: "saveIsProficient", name, isProficient: _isProficient})
+    dispatch({ type: "saveCalcFinalValue", name})
+    dispatch({ type: "saveCalcMod", name})
+    */
+    case "saveBonuses": {
+      return {
+        ...state,
+        saves: {
+          ...state.saves,
+          [action.name]: {
+            ...state.saves[action.name],
+            bonuses: [...action.bonuses]
+          }
+        }
+      }
+    }
+    case "saveIsProficient": {
+      return {
+        ...state,
+        saves: {
+          ...state.saves,
+          [action.name]: {
+            ...state.saves[action.name],
+            isProficient: action.isProficient
+          }
+        }
+      }
+    }
+    case "saveCalcFinalValue": {
+      const finalValue =
+        state.saves[action.name].baseValue +
+        state.saves[action.name].bonuses.reduce((sum, e) => sum + e, 0)
+      return {
+        ...state,
+        saves: {
+          ...state.saves,
+          [action.name]: {
+            ...state.saves[action.name],
+            finalValue: finalValue
+          }
+        }
+      }
+    }
+    case "saveCalcMod": {
+      const modifier = Math.floor(state.saves[action.name].finalValue / 2) - 5
+      return {
+        ...state,
+        saves: {
+          ...state.saves,
+          [action.name]: {
+            ...state.saves[action.name],
+            modifier: modifier
+          }
+        }
+      }
     }
     default:
       return state;

@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { actionCreators } from "../store/CharacterGenerator";
 import * as DnDCharacter from "../models/DnDCharacter";
 
-import { Button, Card } from "@blueprintjs/core";
+import { Button, Card, Icon } from "@blueprintjs/core";
 
 import Generators from "../utils/Generators";
 
@@ -26,6 +26,7 @@ class StoreTester extends Component {
         <CharacterContainer
           abilities={this.props.abilities}
           skills={this.props.skills}
+          saves={this.props.saves}
           proficiencyBonus={this.props.proficiencyBonus}
           updateSkill={this.props.updateSkill}
         />
@@ -36,10 +37,10 @@ class StoreTester extends Component {
 
 class CharacterContainer extends React.PureComponent {
   render() {
-    console.log(this.props);
     return (
       <React.Fragment>
         <AbilitiesContainer abilities={this.props.abilities} />
+        <SavesContainer saves={this.props.saves} updateSave={this.props.updateSave}/>
         <SkillsContainer skills={this.props.skills} updateSkill={this.props.updateSkill} />
         <ProficiencyBonusContainer
           proficiencyBonus={this.props.proficiencyBonus}
@@ -101,13 +102,18 @@ class SkillsContainer extends React.PureComponent {
 }
 
 class Skill extends React.PureComponent {
+
+  flipProficiency(event) {
+
+    event.preventDefault()
+    this.props.updateSkill({ name: this.props.name, isProficient: !this.props.isProficient })
+  }
+
   render() {
-    console.log(this.props.isProficient)
-    console.log('rendering skill')
     return (
-      <div onClick={() => this.props.updateSkill({name: this.props.name, isProficient: !this.props.isProficient})}>
-          {this.props.name} | {this.props.modifer}{" "} | { (this.props.isProficient)?"Y":"N"}
-      </div>
+      <div onClick={() => this.props.updateSkill({ name: this.props.name, isProficient: !this.props.isProficient })}>
+        {this.props.name} | {this.props.modifer}{" "} | {(this.props.isProficient) ? <Icon icon='tick-circle' /> : <Icon icon='circle' />}
+      </div >
     );
   }
 }
@@ -117,6 +123,7 @@ class AbilitiesContainer extends React.PureComponent {
     return (
       <Card>
         <h3
+          className='section-header'
           style={{
             background: "black",
             color: "white"
@@ -125,17 +132,17 @@ class AbilitiesContainer extends React.PureComponent {
           Abilities:
         </h3>
         <div>
-            {Object.keys(this.props.abilities).map(e => {
-              const ability = this.props.abilities[e];
-              return (
-                <Ability
-                  key={e}
-                  name={e}
-                  finalValue={ability.finalValue}
-                  modifier={ability.modifier}
-                />
-              );
-            })}
+          {Object.keys(this.props.abilities).map(e => {
+            const ability = this.props.abilities[e];
+            return (
+              <Ability
+                key={e}
+                name={e}
+                finalValue={ability.finalValue}
+                modifier={ability.modifier}
+              />
+            );
+          })}
         </div>
       </Card>
     );
@@ -147,6 +154,52 @@ class Ability extends React.PureComponent {
     return (
       <div>
         {this.props.name} | {this.props.finalValue} | {this.props.modifier}
+      </div>
+    );
+  }
+}
+
+class SavesContainer extends React.PureComponent {
+  render() {
+    console.log(this.props.saves)
+    return (
+      <Card>
+      <h3 className='section-header' style={{background: 'black', color: 'white'}}>Saves</h3>
+
+      <div>
+        {
+          Object.keys(this.props.saves).map(e => {
+
+            const save = this.props.saves[e]
+            console.log(save)
+            return (
+              <Save
+                key={e}
+                name={e}
+                finalValue={save.finalValue}
+                modifer={save.modifer}
+                isProficient={save.isProficient}
+                updateSave={this.props.updateSave}
+              />
+            )
+          })
+
+        }
+      </div>
+      </Card>
+    );
+  }
+}
+
+class Save extends React.PureComponent {
+  flipProficiency(event) {
+    event.preventDefault()
+    this.props.updateSave({name: this.props.name, isProficient: !this.props.isProficient})
+  }
+  render() {
+    return (
+      <div onClick={() => this.props.updateSave({name: this.props.name, isProficient: !this.props.isProficient})}>
+        {this.props.name} | {this.props.finalValue} | {this.props.modifier} | {(this.props.isProficient) ? <Icon icon='tick-circle' /> : <Icon icon='circle' />}
       </div>
     );
   }
