@@ -1,3 +1,5 @@
+import CharacterWrapper from '../models/CharacterWrapper.js'
+
 // declare const action types
 const updateAbilityScoreBonusType = "uASB";
 const updateAbilityScoreBaseValueType = "uASBV";
@@ -6,6 +8,7 @@ const computeAbilities = "cA";
 
 // declare initial state
 const initialState = {
+  characters: [],
   abilities: {
     strength: { bonuses: [], baseValue: 10, finalValue: 10, modifier: 0 },
     dexterity: { bonuses: [], finalValue: 10, modifier: 0, baseValue: 10 },
@@ -78,6 +81,11 @@ export const actionCreators = {
       .forEach(element => {
         dispatch({ type: "saveCalcMod", name: element });
       });
+      // REPLACE
+
+      // const prevCharacterData = getState().characterGenerator.characters[args.id]
+      // const newCharacterData = CharacterWrapper.updateAbility(prevCharacterData, args.data)
+      // dispatch({type: 'updateCharacter', id: args.id, data: newCharacterData})
   },
   updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
     const _bonuses = bonuses || getState().characterGenerator.skills[name].bonuses

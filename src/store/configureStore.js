@@ -30,7 +30,21 @@ function configureStore (history, initialState) {
     return createStore(
         rootReducer,
         initialState,
-        applyMiddleware(thunk)
+        applyMiddleware(thunk, ({getState, dispatch}) => {
+            return next => action => {
+                const returnValue = next({...action, test: 'test'})
+
+                // retrieve from character store
+
+                if(action.characterId) {
+                    console.log('altering character')
+
+                }
+                console.log(returnValue, next, action)
+
+                return returnValue
+            }
+        })
     )
 }
 
