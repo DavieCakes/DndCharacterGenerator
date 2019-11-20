@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import StoreTester from './components/StoreTester'
 
 import './App.css';

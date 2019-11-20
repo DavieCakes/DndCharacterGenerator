@@ -3,33 +3,39 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 // import action creators for reference in this component
 import { actionCreators } from "../store/CharacterGenerator";
-import * as DnDCharacter from "../models/DnDCharacter";
+import store from "../store/configureStore"
+import Character from "../models/DNDCharacter"
+import Generator from "../utils/Generators"
 
 import { Button, Card, Icon } from "@blueprintjs/core";
-
-import Generators from "../utils/Generators";
 
 class StoreTester extends Component {
   constructor(props) {
     super(props);
-    this.character = DnDCharacter.makeCharacter();
+    // this.character = DnDCharacter.makeCharacter();
+    this.character = Character()
   }
 
   componentDidMount() {
-    Generators.generateDnDCharacter();
   }
 
   render() {
     return (
       <React.Fragment>
-        <Button onClick={Generators.generateDnDCharacter}>Generate</Button>
-        <CharacterContainer
+        <Button onClick={() => console.log('generate')}>Generate</Button>
+        {/* <CharacterContainer
           abilities={this.props.abilities}
           skills={this.props.skills}
           saves={this.props.saves}
           proficiencyBonus={this.props.proficiencyBonus}
           updateSkill={this.props.updateSkill}
+          updateSave={this.props.updateSave}
+        /> */}
+        <CharacterContainer
+          abilities={this.character.abilities}
+          skills = {this.character.skills}
         />
+
       </React.Fragment>
     );
   }
@@ -37,14 +43,15 @@ class StoreTester extends Component {
 
 class CharacterContainer extends React.PureComponent {
   render() {
+    console.log(this.props)
     return (
       <React.Fragment>
         <AbilitiesContainer abilities={this.props.abilities} />
-        <SavesContainer saves={this.props.saves} updateSave={this.props.updateSave}/>
-        <SkillsContainer skills={this.props.skills} updateSkill={this.props.updateSkill} />
-        <ProficiencyBonusContainer
+        {/* <SavesContainer saves={this.props.saves} updateSave={this.props.updateSave}/> */}
+        <SkillsContainer skills={this.props.skills} />
+        {/* <ProficiencyBonusContainer
           proficiencyBonus={this.props.proficiencyBonus}
-        />
+        /> */}
       </React.Fragment>
     );
   }
@@ -88,10 +95,7 @@ class SkillsContainer extends React.PureComponent {
             return (
               <Skill
                 key={e}
-                name={e}
-                modifer={skill.modifier}
-                isProficient={skill.isProficient}
-                updateSkill={this.props.updateSkill}
+                model = {skill}
               />
             );
           })}
@@ -103,16 +107,13 @@ class SkillsContainer extends React.PureComponent {
 
 class Skill extends React.PureComponent {
 
-  flipProficiency(event) {
-
-    event.preventDefault()
-    this.props.updateSkill({ name: this.props.name, isProficient: !this.props.isProficient })
-  }
-
   render() {
     return (
-      <div onClick={() => this.props.updateSkill({ name: this.props.name, isProficient: !this.props.isProficient })}>
-        {this.props.name} | {this.props.modifer}{" "} | {(this.props.isProficient) ? <Icon icon='tick-circle' /> : <Icon icon='circle' />}
+      <div onClick={() => {
+        this.props.model.IsProficient = true
+        console.log(this.props)
+      }}>
+        {this.props.model.Name} | {this.props.model.Modifer}{" "} | {(this.props.model.IsProficient) ? <Icon icon='tick-circle' /> : <Icon icon='circle' />}
       </div >
     );
   }
@@ -120,6 +121,7 @@ class Skill extends React.PureComponent {
 
 class AbilitiesContainer extends React.PureComponent {
   render() {
+    console.log(this.props)
     return (
       <Card>
         <h3
@@ -138,8 +140,8 @@ class AbilitiesContainer extends React.PureComponent {
               <Ability
                 key={e}
                 name={e}
-                finalValue={ability.finalValue}
-                modifier={ability.modifier}
+                finalValue={ability.FinalValue}
+                modifier={ability.Modifier}
               />
             );
           })}

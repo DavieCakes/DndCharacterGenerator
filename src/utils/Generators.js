@@ -1,8 +1,13 @@
 import store from "../store/configureStore";
 import { actionCreators } from "../store/CharacterGenerator";
+import Character from "../models/DNDCharacter"
 
 const Generators = {
   generateDnDCharacter: () => {
+
+    // init character object
+    const character = Character()
+
 
     // generate ability array
     const abilityRolls = [];
@@ -17,9 +22,9 @@ const Generators = {
     }
 
     // Dispatch mutations to store
-    Object.keys(store.getState().characterGenerator.abilities).forEach(
+    Object.keys(character.abilities).forEach(
       e => {
-        store.dispatch(actionCreators.updateAbility({name: e, baseValue: abilityRolls.pop(), bonuses: []}))
+        character.abilities[e].BaseValue = abilityRolls.pop()
       }
     )
 
