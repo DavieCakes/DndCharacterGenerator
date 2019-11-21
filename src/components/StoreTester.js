@@ -12,30 +12,19 @@ import { Button, Card, Icon } from "@blueprintjs/core";
 class StoreTester extends Component {
   constructor(props) {
     super(props);
-    // this.character = DnDCharacter.makeCharacter();
-    this.character = Character()
   }
 
   componentDidMount() {
+    this.props.updateAbility({name: "strength", bonuses: [], baseValue: 15})
   }
-
+  
   render() {
     return (
       <React.Fragment>
         <Button onClick={() => console.log('generate')}>Generate</Button>
-        {/* <CharacterContainer
-          abilities={this.props.abilities}
-          skills={this.props.skills}
-          saves={this.props.saves}
-          proficiencyBonus={this.props.proficiencyBonus}
-          updateSkill={this.props.updateSkill}
-          updateSave={this.props.updateSave}
-        /> */}
-        <CharacterContainer
-          abilities={this.character.abilities}
-          skills = {this.character.skills}
+        <CharacterContainer 
+          abilities = {this.props.characterData.abilities}
         />
-
       </React.Fragment>
     );
   }
@@ -43,15 +32,9 @@ class StoreTester extends Component {
 
 class CharacterContainer extends React.PureComponent {
   render() {
-    console.log(this.props)
     return (
       <React.Fragment>
         <AbilitiesContainer abilities={this.props.abilities} />
-        {/* <SavesContainer saves={this.props.saves} updateSave={this.props.updateSave}/> */}
-        <SkillsContainer skills={this.props.skills} />
-        {/* <ProficiencyBonusContainer
-          proficiencyBonus={this.props.proficiencyBonus}
-        /> */}
       </React.Fragment>
     );
   }
@@ -111,7 +94,6 @@ class Skill extends React.PureComponent {
     return (
       <div onClick={() => {
         this.props.model.IsProficient = true
-        console.log(this.props)
       }}>
         {this.props.model.Name} | {this.props.model.Modifer}{" "} | {(this.props.model.IsProficient) ? <Icon icon='tick-circle' /> : <Icon icon='circle' />}
       </div >
@@ -121,7 +103,6 @@ class Skill extends React.PureComponent {
 
 class AbilitiesContainer extends React.PureComponent {
   render() {
-    console.log(this.props)
     return (
       <Card>
         <h3
@@ -140,8 +121,8 @@ class AbilitiesContainer extends React.PureComponent {
               <Ability
                 key={e}
                 name={e}
-                finalValue={ability.FinalValue}
-                modifier={ability.Modifier}
+                finalValue={ability.finalValue}
+                modifier={ability.modifier}
               />
             );
           })}
@@ -163,7 +144,6 @@ class Ability extends React.PureComponent {
 
 class SavesContainer extends React.PureComponent {
   render() {
-    console.log(this.props.saves)
     return (
       <Card>
       <h3 className='section-header' style={{background: 'black', color: 'white'}}>Saves</h3>
@@ -173,7 +153,6 @@ class SavesContainer extends React.PureComponent {
           Object.keys(this.props.saves).map(e => {
 
             const save = this.props.saves[e]
-            console.log(save)
             return (
               <Save
                 key={e}

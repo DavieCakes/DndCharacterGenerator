@@ -73,7 +73,7 @@ const ability = ({name = '', baseValue = 10, bonuses = []} = {}) => {
     get Bonuses() {
         return bonuses
     },
-    set Bonuses( value)
+    set Bonuses(value)
     {
         bonuses = value
     },

@@ -3,56 +3,21 @@ import Character from "../models/DNDCharacter"
 // declare const action types
 const updateCharacter = "updatecharacter"
 
-// declare action creators
+// declare initial state
+const initialState = {
+  characterData: Character().serialize()
+}
+
+// declare/export action creators
 export const actionCreators = {
-  updateAbility: ({ name, baseValue, bonuses }) => async (
-    dispatch,
-    getState
-  ) => {
-    const _baseValue = (baseValue !== undefined)? baseValue : getState().characterGenerator.abilities[name].baseValue
-    const _bonuses = (bonuses !== undefined) ? bonuses : getState().characterGenerator.abilities[name].bonuses
-    // dispatch({ type: 'updateAbility', name, baseValue, bonuses })
-    dispatch({ type: "abilityBaseValue", name, baseValue: _baseValue });
-    dispatch({ type: "abilityBonuses", name, bonuses: _bonuses });
-    dispatch({ type: "abilityCalcFinalValue", name });
-    dispatch({ type: "abilityCalcMod", name });
-
-    // dispatch to recalculate derived data
-    // skills
-    Object.keys(getState().characterGenerator.skills)
-      .filter(e => getState().characterGenerator.skills[e].ability === name)
-      .forEach(element => {
-        dispatch({ type: "skillCalcMod", name: element });
-      });
-
-    // saves
-    Object.keys(getState().characterGenerator.saves)
-      .filter(element => element === name)
-      .forEach(element => {
-        dispatch({ type: "saveCalcMod", name: element });
-      });
-      // REPLACE
-
-      // const prevCharacterData = getState().characterGenerator.characters[args.id]
-      // const newCharacterData = CharacterWrapper.updateAbility(prevCharacterData, args.data)
-      // dispatch({type: 'updateCharacter', id: args.id, data: newCharacterData})
+  updateAbility: ({ name, baseValue, bonuses }) => (dispatch) => {
+    dispatch({ type: updateCharacter, toUpdate: "ability", name: name, baseValue: baseValue, bonuses: bonuses })
   },
   updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
-    const _bonuses = bonuses || getState().characterGenerator.skills[name].bonuses
-    const _isProficient = (isProficient !== undefined) ? isProficient : getState().characterGenerator.skills[name].isProficient
-
-    dispatch({ type: "skillBonuses", name, bonuses: _bonuses });
-    dispatch({ type: "skillIsProficient", name, isProficient: _isProficient });
-    dispatch({ type: "skillCalcMod", name });
+    throw "not implemented"
   },
   updateSave: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
-    const _bonuses = bonuses || getState().characterGenerator.saves[name].bonuses
-    const _isProficient = (isProficient !== undefined) ? isProficient : getState().characterGenerator.saves[name].isProficient
-    console.log('updating save')
-    dispatch({ type: "saveBonuses", name, bonuses: _bonuses })
-    dispatch({ type: "saveIsProficient", name, isProficient: _isProficient })
-    dispatch({ type: "saveCalcFinalValue", name })
-    dispatch({ type: "saveCalcMod", name })
+    throw "not implemented"
   }
 };
 
@@ -62,8 +27,25 @@ export const reducer = (state, action) => {
 
   switch (action.type) {
     case updateCharacter:
-      
-      return newState
+      const model = Character(state.characterData)
+      switch (action.toUpdate) {
+        case "ability":
+          if (action.bonuses) model.abilities[action.name].Bonuses = action.bonuses
+          if (action.baseValue) model.abilities[action.name].BaseValue = action.baseValue
+          break
+        case "proficiencyBonus":
+          if (action.proficiencyBonus) model.proficiencyBonus = action.proficiencyBonus
+          break
+        case "skill":
+          if (action.bonuses) model.skills[action.name].Bonuses = action.bonuses
+          if (action.isProficient) model.skills[action.name].isProficient = action.isProficient
+          break
+        case "save":
+          if (action.bonuses) model.save[action.name].Bonuses = action.bonuses
+          if (action.isProficient) model.save[action.name].isProficient = action.isProficient
+          break
+      }
+      return { ...state, characterData: model.serialize() }
     default:
       return state;
   }
