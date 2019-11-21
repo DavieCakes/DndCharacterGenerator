@@ -4,15 +4,11 @@ import { bindActionCreators } from "redux";
 // import action creators for reference in this component
 import { actionCreators } from "../store/CharacterGenerator";
 import store from "../store/configureStore"
-import Character from "../models/DNDCharacter"
 import Generator from "../utils/Generators"
 
 import { Button, Card, Icon } from "@blueprintjs/core";
 
 class StoreTester extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
     this.props.updateAbility({name: "strength", bonuses: [], baseValue: 15})
@@ -21,7 +17,7 @@ class StoreTester extends Component {
   render() {
     return (
       <React.Fragment>
-        <Button onClick={() => console.log('generate')}>Generate</Button>
+        <Button onClick={this.props.generate}>Generate</Button>
         <CharacterContainer 
           abilities = {this.props.characterData.abilities}
         />

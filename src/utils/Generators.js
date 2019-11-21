@@ -1,13 +1,9 @@
-import store from "../store/configureStore";
-import { actionCreators } from "../store/CharacterGenerator";
-import Character from "../models/DNDCharacter"
+import Character from "../models/DnDCharacter";
 
 const Generators = {
   generateDnDCharacter: () => {
-
     // init character object
-    const character = Character()
-
+    const character = Character();
 
     // generate ability array
     const abilityRolls = [];
@@ -21,28 +17,25 @@ const Generators = {
       abilityRolls.push(rolls.reduce((e, sum) => e + sum, 0));
     }
 
-    // Dispatch mutations to store
-    Object.keys(character.abilities).forEach(
-      e => {
-        character.abilities[e].BaseValue = abilityRolls.pop()
-      }
-    )
+    // Apply random ability rolls to each character ability
+    Object.keys(character.abilities).forEach(e => {
+      character.abilities[e].BaseValue = abilityRolls.pop();
+    });
 
     // randomly select 5 skill proficiencies
-    const skillProficiencies = new Array(18).fill(true, 0, 5).fill(false, 5, 18)
+    const skillProficiencies = new Array(18)
+      .fill(true, 0, 5)
+      .fill(false, 5, 18);
 
-    // dispatch mutations to store
-    Object.keys(store.getState().characterGenerator.skills).forEach(
-        e => {
-            store.dispatch(actionCreators.updateSkill({
-                name: e,
-                bonuses: [],
-                isProficient: skillProficiencies.splice( Math.floor(Math.random() * (skillProficiencies.length-1)) ,1)[0]
-            })
-            )
-        }
-    )
-    
+    // apply skill proficiencies randomly
+    Object.keys(character.skills).forEach(e => {
+      character.skills[e].IsProficient = skillProficiencies.splice(
+        Math.floor(Math.random() * skillProficiencies.length - 1),
+        1
+      )[0];
+    });
+
+    return character;
   }
 };
 

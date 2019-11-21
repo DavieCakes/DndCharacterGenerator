@@ -75,7 +75,10 @@ const ability = ({name = '', baseValue = 10, bonuses = []} = {}) => {
     },
     set Bonuses(value)
     {
-        bonuses = value
+      if(!Array.isArray(value)) {
+        console.log("new bonuses value is not an array")
+      }
+      bonuses = value
     },
     get Name() {
       return name
@@ -96,8 +99,8 @@ function proficiency({value = 0} = {}) {
     get FinalValue() {
       return value;
     },
-    set FinalValue(value) {
-      value = value;
+    set FinalValue(_value) {
+      value = _value;
     }
   };
 }

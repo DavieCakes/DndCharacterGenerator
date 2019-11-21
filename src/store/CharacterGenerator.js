@@ -1,7 +1,9 @@
-import Character from "../models/DNDCharacter"
+import Character from "../models/DnDCharacter"
+import Generators from "../utils/Generators"
 
 // declare const action types
 const updateCharacter = "updatecharacter"
+const generateCharacter = "generateCharacter"
 
 // declare initial state
 const initialState = {
@@ -10,14 +12,17 @@ const initialState = {
 
 // declare/export action creators
 export const actionCreators = {
-  updateAbility: ({ name, baseValue, bonuses }) => (dispatch) => {
-    dispatch({ type: updateCharacter, toUpdate: "ability", name: name, baseValue: baseValue, bonuses: bonuses })
+  updateAbility: ({name, baseValue, bonuses}) => (dispatch) => {
+    dispatch({ type: updateCharacter, toUpdate: "ability", name, baseValue, bonuses })
   },
   updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
-    throw "not implemented"
+    throw Error("not implemented")
   },
   updateSave: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
-    throw "not implemented"
+    throw Error("not implemented")
+  },
+  generate: () => dispatch => {
+    dispatch({type: generateCharacter})
   }
 };
 
@@ -44,8 +49,12 @@ export const reducer = (state, action) => {
           if (action.bonuses) model.save[action.name].Bonuses = action.bonuses
           if (action.isProficient) model.save[action.name].isProficient = action.isProficient
           break
+        default:
+          break
       }
       return { ...state, characterData: model.serialize() }
+    case generateCharacter:
+      return {...state, characterData: Generators.generateDnDCharacter().serialize()}
     default:
       return state;
   }
