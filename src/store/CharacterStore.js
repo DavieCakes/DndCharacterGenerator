@@ -15,11 +15,14 @@ export const actionCreators = {
   updateAbility: ({name, baseValue, bonuses}) => (dispatch) => {
     dispatch({ type: updateCharacter, toUpdate: "ability", name, baseValue, bonuses })
   },
-  updateSkill: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
-    throw Error("not implemented")
+  updateSkill: ({ name, bonuses, isProficient }) => (dispatch ) => {
+    dispatch({type: updateCharacter, toUpdate:'skill', name, bonuses, isProficient})
   },
-  updateSave: ({ name, bonuses, isProficient }) => (dispatch, getState) => {
-    throw Error("not implemented")
+  updateSave: ({ name, bonuses, isProficient }) => (dispatch) => {
+    dispatch({type: updateCharacter, name, bonuses, isProficient})
+  },
+  updateProficiencyBonus: ({proficiencyBonus}) => dispatch => {
+    dispatch({type: updateCharacter, toUpdate: 'proficiencyBonus', proficiencyBonus})
   },
   generate: () => dispatch => {
     dispatch({type: generateCharacter})
@@ -35,23 +38,24 @@ export const reducer = (state, action) => {
       const model = Character(state.characterData)
       switch (action.toUpdate) {
         case "ability":
-          if (action.bonuses) model.abilities[action.name].Bonuses = action.bonuses
-          if (action.baseValue) model.abilities[action.name].BaseValue = action.baseValue
+          if (action.bonuses !== undefined) model.abilities[action.name].Bonuses = action.bonuses
+          if (action.baseValue !== undefined) model.abilities[action.name].BaseValue = action.baseValue
           break
         case "proficiencyBonus":
-          if (action.proficiencyBonus) model.proficiencyBonus = action.proficiencyBonus
+          if (action.proficiencyBonus !== undefined) model.proficiencyBonus.FinalValue = action.proficiencyBonus
           break
         case "skill":
-          if (action.bonuses) model.skills[action.name].Bonuses = action.bonuses
-          if (action.isProficient) model.skills[action.name].isProficient = action.isProficient
+          if (action.bonuses !== undefined) model.skills[action.name].Bonuses = action.bonuses
+          if (action.isProficient !== undefined) model.skills[action.name].IsProficient = action.isProficient
           break
         case "save":
-          if (action.bonuses) model.save[action.name].Bonuses = action.bonuses
-          if (action.isProficient) model.save[action.name].isProficient = action.isProficient
+          if (action.bonuses !== undefined) model.save[action.name].Bonuses = action.bonuses
+          if (action.isProficient !== undefined) model.save[action.name].IsProficient = action.isProficient
           break
         default:
           break
       }
+
       return { ...state, characterData: model.serialize() }
     case generateCharacter:
       return {...state, characterData: Generators.generateDnDCharacter().serialize()}

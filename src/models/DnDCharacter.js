@@ -29,9 +29,25 @@ export default function Character(oldState = getInitialState()) {
 
       // These depend on previously set wrapper attributes
       derivedProficiency: wrapper.proficiencyBonus,
-      derivedAbility: wrapper.abilities[oldSkill.ability]
+      derivedAbility: wrapper.abilities[oldSkill.derivedAbility]
     });
   });
+
+  // wrap saves
+  wrapper.saves = {}
+  // console.log(oldState.saves)
+  Object.keys(oldState.saves).forEach( e => {
+    const oldSave = oldState.saves[e]
+    wrapper.saves[e] = save({
+      name: e,
+      bonuses: oldSave.bonuses,
+      isProficient: oldSave.isProficient,
+
+      // these depend on previously set wrapper attributes
+      derivedProficiency: wrapper.proficiencyBonus,
+      derivedAbility: wrapper.abilities[e] // saves and abilities share the same name
+    })
+  })
 
   // serialization function
   wrapper.serialize =  function(){
@@ -47,6 +63,10 @@ export default function Character(oldState = getInitialState()) {
     Object.keys(this.skills).forEach(skillName => {
       returnData.skills[skillName] = this.skills[skillName].serialize();
     });
+    returnData.saves = {}
+    Object.keys(this.saves).forEach(saveName => {
+      returnData.saves[saveName] = this.saves[saveName].serialize()
+    })
     return returnData;
   }
 
@@ -100,6 +120,14 @@ function proficiency({value = 0} = {}) {
       return value;
     },
     set FinalValue(_value) {
+      if (! typeof _value === "number") {
+        console.log("prof bonus value NAN")
+        return
+      }
+      if (_value < 0) {
+        console.log('prof bonus value is negative')
+        return
+      }
       value = _value;
     }
   };
@@ -153,10 +181,59 @@ const skill = ({
   };
 }
 
+const save = ({
+  name = '',
+  bonuses = [],
+  isProficient = false,
+  derivedAbility = ability(),
+  derivedProficiency = proficiency()
+} = {}) => {
+  return {
+    set Bonuses(value) {
+      bonuses = value;
+    },
+    get Bonuses() {
+      return bonuses;
+    },
+    set IsProficient(value) {
+      isProficient = value;
+    },
+    get IsProficient() {
+      return isProficient;
+    },
+
+    // immutable
+    get Name() {
+      return name;
+    },
+
+    // derived data
+    get FinalValue() {
+      const profBonus = (this.IsProficient)? derivedProficiency.FinalValue : 0
+      return derivedAbility.FinalValue +
+        this.Bonuses.reduce((sum, e) => e + sum, 0) + profBonus
+    },
+    get Modifer() {
+      return Math.floor(this.FinalValue / 2) - 5;
+    },
+    serialize() {
+      return {
+        bonuses: this.Bonuses,
+        isProficient: this.IsProficient,
+        finalValue: this.FinalValue,
+        modifier: this.Modifer,
+        name: this.Name,
+        derivedAbility: derivedAbility.Name
+      };
+    }
+  };
+}
+
 export {
   skill,
   ability,
-  proficiency
+  proficiency,
+  save
 }
 
 function getInitialState() {

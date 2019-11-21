@@ -1,8 +1,8 @@
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux'
+import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { createBrowserHistory } from 'history'
 
 // import individual reducers
-import * as CharacterGenerator from './CharacterGenerator'
+import * as CharacterGenerator from './CharacterStore'
 import thunk from 'redux-thunk'
 
 function configureStore(history, initialState) {

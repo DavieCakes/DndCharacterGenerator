@@ -2,16 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 // import action creators for reference in this component
-import { actionCreators } from "../store/CharacterGenerator";
-import store from "../store/configureStore"
-import Generator from "../utils/Generators"
+import { actionCreators } from "../store/CharacterStore";
 
 import { Button, Card, Icon } from "@blueprintjs/core";
 
 class StoreTester extends Component {
 
   componentDidMount() {
-    this.props.updateAbility({name: "strength", bonuses: [], baseValue: 15})
+    // this.props.updateAbility({name: "strength", bonuses: [], baseValue: 15})
   }
   
   render() {
@@ -42,6 +40,7 @@ class ProficiencyBonusContainer extends React.PureComponent {
       <div>
         <Card>
           <h3
+            className = 'attributeTitle'
             style={{
               background: "black",
               color: "white"
@@ -97,20 +96,23 @@ class Skill extends React.PureComponent {
   }
 }
 
+class AttributeContainer extends React.PureComponent {
+  render() {
+    return (
+      <Card className='attribute-container'>
+        <h3 className='attribute-header'>{this.props.attributeTitle}</h3>
+        <div className='attribute-list'>
+          {this.props.attributeCollection}
+        </div>
+      </Card>
+    );
+  }
+}
+
 class AbilitiesContainer extends React.PureComponent {
   render() {
     return (
-      <Card>
-        <h3
-          className='section-header'
-          style={{
-            background: "black",
-            color: "white"
-          }}
-        >
-          Abilities:
-        </h3>
-        <div>
+      <AttributeContainer attributeTitle='Abilities' attributeCollection=
           {Object.keys(this.props.abilities).map(e => {
             const ability = this.props.abilities[e];
             return (
@@ -122,8 +124,7 @@ class AbilitiesContainer extends React.PureComponent {
               />
             );
           })}
-        </div>
-      </Card>
+      />
     );
   }
 }

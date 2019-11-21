@@ -1,5 +1,5 @@
-import Character from '../models/DNDCharacter'
-import {skill, ability, proficiency} from '../models/CharacterWrapper'
+import Character from '../models/DnDCharacter'
+import {skill, ability, proficiency} from '../models/DnDCharacter'
 
 
 
@@ -15,4 +15,13 @@ describe('skill wrapper function', () => {
       const _proficiency = proficiency()
     })
 
+})
+
+describe('serialization', () => {
+  test('serialized output can be used as Character factory input', ()=>
+    {
+      const c1 = Character()
+      const c2 = Character(c1.serialize())
+    }
+  )
 })
