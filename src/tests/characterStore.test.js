@@ -18,10 +18,6 @@ function getRandomSkillName() {
     return names[rand];
 }
 
-function toModifier(value) {
-    return Math.floor(value / 2) - 5;
-}
-
 // tests
 describe("Updates to Abilities", () => {
     function abilityTester(abilityName, attributeName, initialValue, mutatedValue) {
