@@ -1,4 +1,4 @@
-import Character from "../models/DnDCharacter"
+import Character from "../models/DnDCharacter/DnDCharacter"
 import Generators from "../utils/Generators"
 
 // declare const action types

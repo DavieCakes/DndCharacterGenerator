@@ -1,7 +1,4 @@
-import Character from '../models/DnDCharacter'
-import {skill, ability, proficiency} from '../models/DnDCharacter'
-
-
+import Character from '../models/DnDCharacter/DnDCharacter'
 
 describe('skill wrapper function', () => {
     /**
@@ -10,9 +7,6 @@ describe('skill wrapper function', () => {
      */
     test('wrapper functions work with no input by setting default values', () => {
       const _character = Character()
-      const _skill = skill()
-      const _ability = ability()
-      const _proficiency = proficiency()
     })
 
 })
@@ -24,4 +18,14 @@ describe('serialization', () => {
       const c2 = Character(c1.serialize())
     }
   )
+})
+
+describe("Mutating ability should cascade mutations" , () => {
+	test("Update ability base value updates skill values", () => {
+		const character = Character()
+		character.abilities.strength.BaseValue = 10
+		expect(character.skills.athletics.FinalValue).toEqual(10)
+		character.abilities.strength.BaseValue = 15
+		expect(character.skills.athletics.FinalValue).toEqual(15)
+	})
 })

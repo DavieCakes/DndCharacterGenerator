@@ -1,12 +1,51 @@
 .attribute-container {
-  
+  border: 1px solid black;
+  /* border-radius: 25%; */
+  max-width: 300px;
+  margin: 5px;
 }
 
 .attribute-header {
   background: black;
   color: white;
+  margin: 0px;
 }
 
 .attribute-list {
+	margin: 2px;
+}
 
+.ability-base-value-input {
+	max-width: 20px;
+	border: 1px solid black;
+	margin: 1px;
+}
+
+.character-container {
+	/* text-align: center; */
+	/* padding: auto; */
+	display: flex;
+}
+
+input[type=number]::-webkit-inner-spin-button
+input[type=number]::-webkit-outer-spin-button
+{
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+input[type=number]
+{
+  -moz-appearance: textfield;
+}
+
+button {
+	border-radius: 0%;
+	box-shadow: none;
+	border: none;
+	background-color: darkgray;
+	color: black;
+	padding: 5px;
+	text-align: center;
+	margin: 5px;
 }

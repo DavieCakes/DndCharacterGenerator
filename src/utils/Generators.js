@@ -1,4 +1,4 @@
-import Character from "../models/DnDCharacter";
+import Character from "../models/DnDCharacter/DnDCharacter";
 
 const Generators = {
   generateDnDCharacter: () => {
