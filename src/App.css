@@ -16,7 +16,8 @@
 }
 
 .ability-base-value-input {
-	max-width: 20px;
+	max-width: 32px;
+	min-width: 32px;
 	border: 1px solid black;
 	margin: 1px;
 }

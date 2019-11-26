@@ -19,6 +19,7 @@ class StoreTester extends Component {
           updateSkill={this.props.updateSkill}
           updateSave={this.props.updateSave}
           updateAbility={this.props.updateAbility}
+          updateProficiencyBonus={this.props.updateProficiencyBonus}
         />
       </React.Fragment>
     );
@@ -30,7 +31,8 @@ class CharacterContainer extends React.PureComponent {
     return (
       <React.Fragment>
         <ProficiencyBonusContainer
-          proficiencyBonus={this.props.proficiencyBonus}
+					proficiencyBonus={this.props.proficiencyBonus}
+					updateProficiencyBonus={this.props.updateProficiencyBonus}
         />
         <AbilitiesContainer
           abilities={this.props.abilities}
@@ -50,11 +52,26 @@ class CharacterContainer extends React.PureComponent {
 }
 
 class ProficiencyBonusContainer extends React.PureComponent {
+	onValueChange = event => {
+    event.preventDefault();
+    this.props.updateProficiencyBonus({
+      proficiencyBonus: parseInt(event.target.value)
+    });
+  };
   render() {
     return (
       <AttributeContainer
         attributeTitle="Proficiency Bonus"
-        attributeCollection={this.props.proficiencyBonus}
+        attributeCollection={
+          <input
+            className="ability-base-value-input"
+            type="number"
+            value={this.props.proficiencyBonus}
+            onChange={this.onValueChange}
+            max="20"
+            min="0"
+          />
+        }
       />
     );
   }
@@ -98,7 +115,10 @@ class Skill extends React.PureComponent {
         ) : (
           <Icon icon="circle" />
         )}{" "}
-        {this.props.name} {(this.props.modifier>=0)?`+${this.props.modifier}`:`${this.props.modifier}`}
+        {this.props.name}{" "}
+        {this.props.modifier >= 0
+          ? `+${this.props.modifier}`
+          : `${this.props.modifier}`}
       </div>
     );
   }
@@ -148,7 +168,7 @@ class Ability extends React.PureComponent {
   render() {
     return (
       <div>
-        {this.props.name} {" "}
+        {this.props.name}{" "}
         <input
           className="ability-base-value-input"
           type="number"
@@ -157,7 +177,9 @@ class Ability extends React.PureComponent {
           max="20"
           min="0"
         />{" "}
-         { (this.props.modifier>=0)?`+${this.props.modifier}`:`${this.props.modifier}` }
+        {this.props.modifier >= 0
+          ? `+${this.props.modifier}`
+          : `${this.props.modifier}`}
       </div>
     );
   }
@@ -209,7 +231,10 @@ class Save extends React.PureComponent {
         ) : (
           <Icon icon="circle" />
         )}{" "}
-        {this.props.name} {(this.props.modifier>=0)?`+${this.props.modifier}`:this.props.modifier}
+        {this.props.name}{" "}
+        {this.props.modifier >= 0
+          ? `+${this.props.modifier}`
+          : this.props.modifier}
       </div>
     );
   }
