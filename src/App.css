@@ -8,7 +8,8 @@
 .attribute-header {
   background: black;
   color: white;
-  margin: 0px;
+	margin: 0px;
+	text-align: center;
 }
 
 .attribute-list {
