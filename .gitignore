@@ -60,3 +60,10 @@ typings/
 
 # next.js build output
 .next
+
+# firebase
+**/.firebase/
+**/.firebaserc
+
+# Build directory
+**/build
